@@ -128,6 +128,9 @@ class App(Frame):
                     else:
                         continue
 
+            if amount < int(self.chips[-1]):
+                break
+
 
 if __name__ == '__main__':
     root = Tk()
