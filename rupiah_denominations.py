@@ -87,7 +87,6 @@ class App(Frame):
             self.entryChips[chip].insert(0, "0")
             self.entryChips[chip]['state'] = DISABLED
 
-
     def process(self):
         self.resetCount()
 
@@ -130,7 +129,6 @@ class App(Frame):
 
             if amount < int(self.chips[-1]):
                 break
-
 
 if __name__ == '__main__':
     root = Tk()
