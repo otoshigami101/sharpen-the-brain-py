@@ -2,13 +2,35 @@ import math
 
 current_page = 1
 
+data_count = 200
+paginate_count = 5
+display_link_count = 10
+another_link_count = 3
+
+
+def config():
+    global data_count, paginate_count, display_link_count, another_link_count
+
+    try:
+        data_count = int(raw_input("data count (default: 200) > ") or 200)
+        paginate_count = int(raw_input("paginate count (default: 5)> ") or 5)
+        display_link_count = int(
+            raw_input("display link (default: 10) > ") or 10)
+        another_link_count = int(
+            raw_input("display link (default: 3) > ") or 3)
+        paginate()
+
+    except ValueError:
+        print ("\nvalue must be a number")
+        config()
+
 
 def choose_page():
     global current_page
 
     try:
         current_page = int(raw_input("choose page > "))
-        paginate(100, 5, 8)
+        paginate()
         choose_page()
 
     except ValueError:
@@ -16,60 +38,70 @@ def choose_page():
         choose_page()
 
 
-def paginate(data_count, paginate_count, display_link_count, another_link_count=3):
-    """
-    display list paginate
-    """
+def paginate():
+    global current_page, data_count, paginate_count, display_link_count, another_link_count
 
-    global current_page
+    total_page = int(math.ceil(data_count/paginate_count))  # total of page
 
-    total_page = int(math.ceil(data_count/paginate_count))
+    min_num = another_link_count + 1  # different for split
 
+    start = current_page - another_link_count  # start of num page in center
+    end = start + another_link_count * 2  # end of num page in center
 
-    diff = another_link_count + 1
-    is_split = current_page - diff > another_link_count
-    
-    start = current_page - another_link_count
-    end = start + another_link_count * 2
+    is_elipsis_r = current_page - another_link_count <= total_page - \
+        display_link_count  # elipsis condition in end
 
-    is_elipsis = current_page - another_link_count <= total_page - display_link_count or not current_page < total_page - display_link_count
-    elipsis_num = total_page - another_link_count
-    
-    if is_elipsis == False:
-        start = total_page - display_link_count + 1
-        end = total_page
+    count_r = total_page - another_link_count + \
+        1  # start num after elipsis in end
 
+    max_num = total_page - display_link_count
+    # min start num in end if not elipsis
+
+    is_split_l = current_page - min_num > another_link_count
+    # is curr page - min_num bigger than another_link_count ?
+
+    not_split_r = current_page - min_num > max_num
+    # is curr page - min_num bigger than max_num ?
+
+    # set elipsis false if not split is true
+    if not_split_r == True:
+        is_elipsis_r = False
+
+    # reassign start, end value
+    # if not end is not start with elipsis
+    if is_elipsis_r == False:
+        start = max_num + 1  # start of num in end
+        end = total_page  # end of page
 
     i = 0
     arr = []
     while i < total_page:
         if i == -1:
-            if is_split == True:
-                arr.append(str("..."))
-                i = start
-                for j in range(start, end+1):
-                    arr.append(str(j))
-                    i = i + 1
-                    if i > total_page:
-                        break
+            i = another_link_count + 1
+            s = display_link_count + 1
 
-            else:
-                for j in range(another_link_count, display_link_count+1):
-                    arr.append(str(j))
+            if is_split_l == True:
+                i = start
+                s = end + 1
+                arr.append(str("..."))
+
+            for j in range(i, s):
+                arr.append(str(j))
+                if j > total_page:
+                    break
 
             i = -2
 
         elif i == -2:
-            i = end + 1 if (is_split == True and is_elipsis ==
-                            False) else elipsis_num
+            i = end + 1
+            s = total_page+1
 
-            for j in range(i, total_page+1):
-                o = i
+            if is_elipsis_r == True:
+                i = count_r
+                arr.append(str("..."))
 
-                if i == elipsis_num and is_elipsis == True:
-                    o = "..."
-
-                arr.append(str(o))
+            for j in range(i, s):
+                arr.append(str(j))
                 i = i + 1
 
         else:
@@ -78,15 +110,17 @@ def paginate(data_count, paginate_count, display_link_count, another_link_count=
 
             if i == another_link_count:
                 i = -1
-            elif i > display_link_count:
+            elif i == display_link_count:
                 i = -2
 
     print "==============="
-    print "links :"
+    print "pages :"
     print " ".join(arr)
-    print "\ntotal page" + " " + str(total_page)
+    print "\ncurrent page :" + " " + str(current_page)
+    print "total page" + " " + str(total_page)
 
 
 if __name__ == "__main__":
-    paginate(100, 5, 8)
+    config()
+    paginate()
     choose_page()
