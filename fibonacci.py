@@ -13,10 +13,10 @@ def run(start, end):
         if (len(a) == 2):
             c = a[0] + a[1]
 
-            a[0] = c  # result now
+            a[0] = c  # result
             a[1] = a[1] if b == 0 else b  # result before
 
-            b = c  # set to result now
+            b = c  # set to result
         else:
             a.append(c)
 
